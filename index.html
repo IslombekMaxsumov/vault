@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="VAULT is your personal gaming archive: a game library, playtime log with a live timer, stats, clips and a leaderboard. Uzbek, Russian and English." />
+    <meta name="theme-color" content="#F5F3EF" />
+    <title>VAULT</title>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Golos Text (headings at 650–800, body at 400–500) and Roboto Mono for numbers; both have Latin and Cyrillic. -->
+    <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400..800&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <!-- Set the theme before React loads, so the page never flashes the wrong colours. -->
+    <script>
+      (function () {
+        var pref = null;
+        try { pref = localStorage.getItem("gamerhub:theme"); } catch (e) {}
+        var dark = pref === "dark" || ((pref === null || pref === "system") &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>VAULT needs JavaScript to run.</noscript>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

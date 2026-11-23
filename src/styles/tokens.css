@@ -1,0 +1,79 @@
+/* VAULT design tokens, from the RAVENI / "After Hours" brief (2026-11-24).
+   Light and dark are designed separately. All text pairs are WCAG AA
+   (checked with a contrast script). Brief values that failed AA in light mode
+   were darkened just enough; the brief's value is noted next to each one. */
+
+:root {
+  --font-display: "Golos Text", system-ui, -apple-system, "Segoe UI", sans-serif; /* brief: Golos Display (not on Google Fonts): Golos Text at 650–800 instead */
+  --font-body: "Golos Text", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-num: "Roboto Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+
+  --bg: #f5f3ef;
+  --surface: #ffffff;
+  --raised: #ece9e3;
+  --ink: #222321;
+  --ink-2: #696862;        /* brief #77766F: 3.76:1 on raised */
+  --line: #dfddd6;         /* dividers only */
+  --line-strong: #868580;  /* field and control borders, 3:1 */
+  --accent: #c96738;       /* decoration: Session Trace, rings, chart marks (3.5:1, non-text) */
+  --accent-ink: #a1522d;   /* accent as text: links, active nav (brief accent #C96738: 3.46:1) */
+  --btn: #b25b31;          /* primary button fill under white text (4.7:1) */
+  --btn-hover: #9d4a27;    /* brief hover #AD512B */
+  --on-accent: #ffffff;
+  --accent-soft: #f4e5da;
+  --ok: #31745c;           /* brief #38856A */
+  --warn: #8b5f26;         /* brief #B57B32 */
+  --danger: #af4542;       /* brief #C24D49 */
+  --danger-soft: #f6e3e1;
+  --focus: #222321;
+
+  /* games in charts (brief set, darkened a little to reach 3:1 on white) */
+  --c1: #cc7550; --c2: #ac863c; --c3: #6e9678; --c4: #718fa5;
+  --c5: #bb7a83; --c6: #529896; --c7: #9285ac; --c8: #a0886a;
+  /* heat map: 0 = no play, 4 = most */
+  --heat-0: #e7e4dd; --heat-1: #f0d2bd; --heat-2: #e2a27c; --heat-3: #c96738; --heat-4: #86401f;
+
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-xs: 6px;
+  --shadow-pop: 0 12px 32px rgba(34, 35, 33, 0.14);
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --t-fast: 160ms;
+  --t-chart: 380ms;
+  --header-h: 60px;
+  --tabbar-h: 64px;
+  --content: 1440px;
+  --gutter: 16px;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --bg: #171918;
+  --surface: #202321;
+  --raised: #292d2a;
+  --ink: #f1efe9;
+  --ink-2: #a3a49c;
+  --line: #373b37;
+  --line-strong: #737673;
+  --accent: #eb9562;
+  --accent-ink: #eb9562;
+  --btn: #eb9562;
+  --btn-hover: #f5aa7b;
+  --on-accent: #241710;
+  --accent-soft: #38271e;
+  --ok: #75b99a;
+  --warn: #e4b66e;
+  --danger: #e27b75;
+  --danger-soft: #3a2422;
+  --focus: #f1efe9;
+
+  --c1: #d47a53; --c2: #c69a45; --c3: #739c7d; --c4: #7797ae;
+  --c5: #bf7c86; --c6: #539a98; --c7: #9588b0; --c8: #b69a78;
+  --heat-0: #2b2f2c; --heat-1: #4a3226; --heat-2: #7c4b2f; --heat-3: #b96d42; --heat-4: #f2a774;
+
+  --shadow-pop: 0 14px 36px rgba(0, 0, 0, 0.45);
+  color-scheme: dark;
+}
+
+@media (min-width: 720px) { :root { --gutter: 24px; } }
+@media (min-width: 1100px) { :root { --gutter: 40px; } }
