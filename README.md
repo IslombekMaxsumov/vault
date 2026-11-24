@@ -1,5 +1,7 @@
 # VAULT
 
+
+**Live site: https://islombekmaxsumov.github.io/vault/**
 Site #9 of my 10-website course project: a personal gaming archive. Keep a library of the games you play, log playtime with a live timer or by hand, see stats and charts, keep your clips (pasted video links) and compare yourself on a leaderboard. Features are inspired by Medal.tv; the name and look are VAULT's own.
 
 **Demo account for checking:** login `qwerty`, password `123` (already filled with 9 games, about 8 weeks of sessions, clips and 7 demo players on the leaderboard). The login page has a button that fills it in.
