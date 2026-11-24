@@ -1,7 +1,11 @@
-// Drawn game covers (no real cover art): a 3:4 card in the game's colour with
-// an abstract composition picked from the title's hash, the title set large,
-// the genre, the platform and a small VAULT mark. Same title → same cover.
+// Game covers. Catalog games show their official cover art (public/covers,
+// downloaded by tools/covers.mjs). Games added by hand, or art that fails to
+// load, get a drawn cover: a 3:4 card in the game's colour with an abstract
+// composition picked from the title's hash, the title set large, the genre,
+// the platform and a small VAULT mark. Same title → same cover.
+import { useState } from "react";
 import { hashString, gameColor } from "../lib/gameColor.js";
+import { COVER_SOURCES } from "../data/covers.js";
 import { useI18n } from "../i18n/useI18n.js";
 import { Mark } from "./Logo.jsx";
 
@@ -14,8 +18,19 @@ const SHAPES = [
   (r) => <><rect x={6 + (r % 6)} y={4} width={12} height={12} transform={`rotate(${(r % 4) * 10} 15 10)`} /><circle cx={8} cy={20} r={2.5} /></>,
 ];
 
+const coverUrl = (id) => (id && COVER_SOURCES[id] ? `${import.meta.env.BASE_URL}covers/${id}.jpg` : "");
+
 export function GameCover({ game, size = "md", className = "" }) {
   const { t } = useI18n();
+  const [broken, setBroken] = useState(false);
+  const art = broken ? "" : coverUrl(game.catalogId || game.id);
+  if (art) {
+    return (
+      <div className={`cover cover-art-img cover-${size} ${className}`} style={{ "--cover": gameColor(game.title) }} aria-hidden="true">
+        <img src={art} alt="" loading="lazy" decoding="async" onError={() => setBroken(true)} />
+      </div>
+    );
+  }
   const h = hashString(game.title);
   const shape = SHAPES[h % SHAPES.length]((h >> 4) & 255);
   const long = game.title.length > 22;

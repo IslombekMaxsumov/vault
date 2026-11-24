@@ -36,7 +36,9 @@ From the RAVENI / "After Hours" brief, named VAULT: an editorial gaming archive.
 - Golos Text for headings and body (Golos Display isn't on Google Fonts, so headings use Golos Text at 650–800) and Roboto Mono for every number. Both have Cyrillic.
 - **Contrast:** brief colours that failed WCAG AA in light mode were darkened just enough. The original values are noted in `src/styles/tokens.css`.
 - **Signature, the Session Trace:** small burnt-orange vertical marks, one per session. They appear in session rows, on the game page, in the logo and in the most-played block.
-- **Drawn game covers** (`components/GameCover.jsx`): the title's hash picks a colour and one of five geometric compositions, with the genre, platform and a small VAULT mark. There is no real cover art.
+- **Game covers** (`components/GameCover.jsx`), all 2:3:
+  - The 37 games in the built-in catalog show their **official cover art** (`public/covers`, 400×600). `tools/covers.mjs` downloads it: 27 from Steam, 6 from the Microsoft Store, Mario Kart 8 from Wikipedia and 3 phone games from Google Play. The source of each is in `src/data/covers.js`. The art belongs to its publishers and is used here for a non-commercial course project.
+  - Games added by hand, or art that fails to load, get a **drawn cover**: the title's hash picks a colour and one of five geometric compositions, with the genre, platform and a small VAULT mark.
 - **Clip placeholders:** clips without a thumbnail get a placeholder in their game's colour.
 - **Logo:** an archive bracket holding three session marks of rising height, the last one in orange.
 
