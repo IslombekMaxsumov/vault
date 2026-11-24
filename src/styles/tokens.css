@@ -1,79 +1,92 @@
-/* VAULT design tokens, from the RAVENI / "After Hours" brief (2026-11-24).
-   Light and dark are designed separately. All text pairs are WCAG AA
-   (checked with a contrast script). Brief values that failed AA in light mode
-   were darkened just enough; the brief's value is noted next to each one. */
+/* VAULT · "Living Archive" (art direction revision, 2026-11-24).
+   Light and dark are designed separately: light is warm archive paper with
+   coral and slate blue; dark is a deep blue-slate room with soft coral and
+   blue light. All text pairs pass WCAG AA (checked with a contrast script);
+   brief values that failed in light mode were darkened just enough, and the
+   brief's value is noted next to each one. */
 
 :root {
-  --font-display: "Golos Text", system-ui, -apple-system, "Segoe UI", sans-serif; /* brief: Golos Display (not on Google Fonts): Golos Text at 650–800 instead */
+  --font-display: "Golos Text", system-ui, -apple-system, "Segoe UI", sans-serif; /* brief: Golos Display (not on Google Fonts): Golos Text at 700–800 */
   --font-body: "Golos Text", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-num: "Roboto Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
 
-  --bg: #f5f3ef;
-  --surface: #ffffff;
-  --raised: #ece9e3;
-  --ink: #222321;
-  --ink-2: #696862;        /* brief #77766F: 3.76:1 on raised */
-  --line: #dfddd6;         /* dividers only */
-  --line-strong: #868580;  /* field and control borders, 3:1 */
-  --accent: #c96738;       /* decoration: Session Trace, rings, chart marks (3.5:1, non-text) */
-  --accent-ink: #a1522d;   /* accent as text: links, active nav (brief accent #C96738: 3.46:1) */
-  --btn: #b25b31;          /* primary button fill under white text (4.7:1) */
-  --btn-hover: #9d4a27;    /* brief hover #AD512B */
-  --on-accent: #ffffff;
-  --accent-soft: #f4e5da;
-  --ok: #31745c;           /* brief #38856A */
-  --warn: #8b5f26;         /* brief #B57B32 */
-  --danger: #af4542;       /* brief #C24D49 */
-  --danger-soft: #f6e3e1;
-  --focus: #222321;
+  --bg: #f3f1eb;
+  --surface: #fffefa;
+  --raised: #e9e6dd;
+  --ink: #20262b;
+  --ink-2: #606668;        /* brief #777E80: 3.66:1 on the background */
+  --line: #dddcd4;         /* dividers only */
+  --line-strong: #85847f;  /* field lines and control edges, 3:1 */
+  --accent: #e1634e;       /* coral for graphics (3:1); brief #E86650 is 2.9:1 */
+  --accent-fill: #e86650;  /* coral surfaces: buttons and big shapes, always with dark ink on top */
+  --accent-ink: #a54839;   /* coral as text */
+  --on-accent: #20262b;    /* text on coral: 4.7:1 (white would be 3.3:1) */
+  --accent-soft: #f8ddd5;
+  --blue: #6a909c;         /* slate blue for graphics; brief #729BA8 */
+  --blue-ink: #4e6972;     /* slate blue as text */
+  --blue-soft: #dde8ea;
+  --ok: #327055;
+  --warn: #865d20;
+  --danger: #b23c32;
+  --danger-soft: #f6e0dc;
+  --focus: #20262b;
 
-  /* games in charts (brief set, darkened a little to reach 3:1 on white) */
-  --c1: #cc7550; --c2: #ac863c; --c3: #6e9678; --c4: #718fa5;
-  --c5: #bb7a83; --c6: #529896; --c7: #9285ac; --c8: #a0886a;
-  /* heat map: 0 = no play, 4 = most */
-  --heat-0: #e7e4dd; --heat-1: #f0d2bd; --heat-2: #e2a27c; --heat-3: #c96738; --heat-4: #86401f;
+  --c1: #e1634e; --c2: #6a909c; --c3: #a9863e; --c4: #759370;
+  --c5: #a57c9b; --c6: #4d9792; --c7: #b3805b; --c8: #828b9c;
+  --heat-0: #e3e0d6; --heat-1: #f6cfc4; --heat-2: #f0a08f; --heat-3: #e1634e; --heat-4: #9c4234;
 
-  --radius: 12px;
-  --radius-sm: 8px;
-  --radius-xs: 6px;
-  --shadow-pop: 0 12px 32px rgba(34, 35, 33, 0.14);
-  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
-  --t-fast: 160ms;
-  --t-chart: 380ms;
-  --header-h: 60px;
-  --tabbar-h: 64px;
+  /* paper grain: an SVG noise tile, very faint */
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  --atmosphere: radial-gradient(1200px 600px at 85% -10%, rgba(232, 102, 80, 0.08), transparent 60%), radial-gradient(900px 500px at -10% 30%, rgba(114, 155, 168, 0.1), transparent 60%);
+
+  --r-lg: 28px;
+  --r: 16px;
+  --r-sm: 10px;
+  --r-xs: 6px;
+  --shadow-pop: 0 24px 60px -20px rgba(32, 38, 43, 0.28);
+  --ease: cubic-bezier(0.22, 0.8, 0.24, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --t-fast: 170ms;
+  --t-mid: 320ms;
+  --t-chart: 620ms;
+  --header-h: 68px;
+  --tabbar-h: 66px;
   --content: 1440px;
-  --gutter: 16px;
+  --gutter: 18px;
   color-scheme: light;
 }
 
 :root[data-theme="dark"] {
-  --bg: #171918;
-  --surface: #202321;
-  --raised: #292d2a;
-  --ink: #f1efe9;
-  --ink-2: #a3a49c;
-  --line: #373b37;
-  --line-strong: #737673;
-  --accent: #eb9562;
-  --accent-ink: #eb9562;
-  --btn: #eb9562;
-  --btn-hover: #f5aa7b;
-  --on-accent: #241710;
-  --accent-soft: #38271e;
-  --ok: #75b99a;
-  --warn: #e4b66e;
-  --danger: #e27b75;
-  --danger-soft: #3a2422;
-  --focus: #f1efe9;
+  --bg: #151c22;
+  --surface: #202a31;
+  --raised: #2b373e;
+  --ink: #f2f0e9;
+  --ink-2: #a1adb0;
+  --line: #39444a;
+  --line-strong: #788084;
+  --accent: #ff8069;
+  --accent-fill: #ff8069;
+  --accent-ink: #ff8069;
+  --on-accent: #151c22;
+  --accent-soft: #422c2b;
+  --blue: #83b3c0;
+  --blue-ink: #83b3c0;
+  --blue-soft: #233843;
+  --ok: #6fc29a;
+  --warn: #e8b866;
+  --danger: #ff8a80;
+  --danger-soft: #45282a;
+  --focus: #f2f0e9;
 
-  --c1: #d47a53; --c2: #c69a45; --c3: #739c7d; --c4: #7797ae;
-  --c5: #bf7c86; --c6: #539a98; --c7: #9588b0; --c8: #b69a78;
-  --heat-0: #2b2f2c; --heat-1: #4a3226; --heat-2: #7c4b2f; --heat-3: #b96d42; --heat-4: #f2a774;
+  --c1: #e86650; --c2: #729ba8; --c3: #c9a04a; --c4: #7fa07a;
+  --c5: #a57c9b; --c6: #4f9c96; --c7: #c08a62; --c8: #8c95a8;
+  --heat-0: #26323a; --heat-1: #4a3331; --heat-2: #8a4a40; --heat-3: #d9705d; --heat-4: #ff9c88;
 
-  --shadow-pop: 0 14px 36px rgba(0, 0, 0, 0.45);
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .035 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  --atmosphere: radial-gradient(1100px 620px at 88% -12%, rgba(255, 128, 105, 0.11), transparent 62%), radial-gradient(1000px 640px at -12% 18%, rgba(131, 179, 192, 0.12), transparent 60%), radial-gradient(800px 500px at 50% 110%, rgba(131, 179, 192, 0.06), transparent 60%);
+  --shadow-pop: 0 28px 70px -24px rgba(0, 0, 0, 0.7);
   color-scheme: dark;
 }
 
-@media (min-width: 720px) { :root { --gutter: 24px; } }
-@media (min-width: 1100px) { :root { --gutter: 40px; } }
+@media (min-width: 720px) { :root { --gutter: 28px; } }
+@media (min-width: 1100px) { :root { --gutter: 48px; } }

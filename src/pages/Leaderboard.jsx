@@ -41,7 +41,7 @@ export function LeaderboardPage({ route }) {
     <tr className={`${r.username === me.username ? "is-me" : ""} ${r.rank <= 3 ? "top-" + r.rank : ""} ${pinned ? "is-pinned" : ""}`} aria-current={r.username === me.username ? "true" : undefined}>
       <td className="lb-rank num">{r.rank}</td>
       <th scope="row" className="lb-player">
-        <Avatar user={r} size={30} />
+        <Avatar user={r} size={40} />
         <span className="lb-name">{r.name}{r.username === me.username && <span className="lb-you">{t("lb.you")}</span>}</span>
       </th>
       <td className="lb-top">{r.top || "—"}</td>

@@ -11,6 +11,7 @@ import { Logo } from "./Logo.jsx";
 import { Avatar } from "./ui.jsx";
 import { Modal } from "./Modal.jsx";
 import { useToast } from "./useToast.js";
+import { useIndicator } from "../hooks/useMotion.js";
 
 export const NAV = [
   { page: "", key: "nav.home", icon: House },
@@ -26,8 +27,9 @@ const owner = (page) => (page === "game" ? "library" : page);
 
 function LangSwitch() {
   const { t, lang, setLang } = useI18n();
+  const ref = useIndicator('[aria-pressed="true"]', [lang]);
   return (
-    <div className="seg seg-lang" role="group" aria-label={t("header.lang")}>
+    <div ref={ref} className="seg seg-lang" role="group" aria-label={t("header.lang")}>
       {["uz", "ru", "en"].map((l) => (
         <button key={l} type="button" lang={l} aria-pressed={lang === l} onClick={() => setLang(l)}>
           <span aria-hidden="true">{l.toUpperCase()}</span>
@@ -104,14 +106,15 @@ function AccountMenu({ me }) {
 }
 
 export function Header({ page, theme }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { me } = useDb();
   const cur = owner(page);
+  const navRef = useIndicator('[aria-current="page"]', [cur, lang]);
   return (
     <header className="site-header">
       <div className="header-bar">
         <a className="brand" href={href("")} aria-label={t("header.home")}><Logo /></a>
-        <nav className="top-nav" aria-label={t("nav.label")}>
+        <nav ref={navRef} className="top-nav" aria-label={t("nav.label")}>
           {NAV.map((n) => (
             <a key={n.page} href={href(n.page)} aria-current={cur === n.page ? "page" : undefined}>{t(n.key)}</a>
           ))}
@@ -128,14 +131,15 @@ export function Header({ page, theme }) {
 }
 
 export function TabBar({ page }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [more, setMore] = useState(false);
   const cur = owner(page);
   const tabs = NAV.slice(0, 4);
   const moreOn = MORE.includes(cur);
+  const barRef = useIndicator('[aria-current="page"]', [cur, lang]);
   return (
     <>
-      <nav className="tab-bar" aria-label={t("nav.label")}>
+      <nav ref={barRef} className="tab-bar" aria-label={t("nav.label")}>
         {tabs.map((n) => (
           <a key={n.page} href={href(n.page)} aria-current={cur === n.page ? "page" : undefined}>
             <n.icon size={20} aria-hidden="true" /><span>{t(n.key + "Short")}</span>

@@ -29,18 +29,21 @@ Site #9 of my 10-website course project: a personal gaming archive. Keep a libra
 - **Clip links** (`lib/clips.js`): YouTube (watch, youtu.be, shorts, embed, `t=` start time), Twitch clips and videos, Streamable, Vimeo and direct video files play inside the site; Medal and other links open on their own site.
 - **Accounts** (`lib/accounts.js`): front-end only, salted SHA-256 hashes in localStorage (same approach as typeflow, #5).
 
-## Design
+## Design: "Living Archive" (art direction revision, 2026-11-24)
 
-From the RAVENI / "After Hours" brief, named VAULT: an editorial gaming archive.
-- Warm stone light theme and a green-black dark theme, designed separately. Burnt orange accent `#C96738` / `#EB9562`.
-- Golos Text for headings and body (Golos Display isn't on Google Fonts, so headings use Golos Text at 650–800) and Roboto Mono for every number. Both have Cyrillic.
-- **Contrast:** brief colours that failed WCAG AA in light mode were darkened just enough. The original values are noted in `src/styles/tokens.css`.
-- **Signature, the Session Trace:** small burnt-orange vertical marks, one per session. They appear in session rows, on the game page, in the logo and in the most-played block.
+An immersive personal archive rather than a dashboard: each page has its own composition.
+- **Palette:** warm archive paper `#F3F1EB` with coral `#E86650` and slate blue `#729BA8` (light); a deep blue-slate room `#151C22` with soft coral and blue light (dark). Brief values that failed AA in light mode were darkened just enough (noted in `src/styles/tokens.css`). Coral buttons carry dark text (white on coral is only 3.3:1).
+- **Type:** Golos Text at 700–800 for large editorial headings (Golos Display is not on Google Fonts), Golos Text for body, Roboto Mono for every number.
+- **Motif:** thin orbit lines (hero, login collage, empty states, the orbit chart) and the coral **Session Trace** (one mark per session).
+- **Home:** a large greeting, this week's time as the one big counting number, the featured game's art turned slightly in front of an arch outline with slowly drifting organic shapes, the goal ring and the start-session panel overlapping it; a wide activity band with curved edges; a session timeline; an editorial clip gallery.
+- **Library:** compact toolbar, a featured-favourite band, a staggered shelf of larger covers with a start button that appears on hover (always visible on touch screens).
+- **Game page:** the art blurred and enlarged as a backdrop, a big title and counting playtime, facts, timeline, clips.
+- **Stats:** one huge total, this period against the one before, a wide bar chart, an orbit chart (one arc per game), lollipop rows, a dot heat map that appears week by week. Every chart keeps its table.
+- **Leaderboard:** big rank numerals, a restrained top three, avatars with rings, a sliding period control, your row highlighted and pinned when far down.
+- **Motion** (150–450 ms, longer only for charts): staggered page reveals, sliding nav, tab and segmented indicators, count-up numbers, bars growing from the baseline, rings and arcs drawing themselves, cover layers drifting apart on hover, a short reveal for a newly logged session, like and dialog animations. With "reduce motion" all of it is off and numbers show their value at once.
 - **Game covers** (`components/GameCover.jsx`), all 2:3:
-  - The 37 games in the built-in catalog show their **official cover art** (`public/covers`, 400×600). `tools/covers.mjs` downloads it: 27 from Steam, 6 from the Microsoft Store, Mario Kart 8 from Wikipedia and 3 phone games from Google Play. The source of each is in `src/data/covers.js`. The art belongs to its publishers and is used here for a non-commercial course project.
-  - Games added by hand, or art that fails to load, get a **drawn cover**: the title's hash picks a colour and one of five geometric compositions, with the genre, platform and a small VAULT mark.
-- **Clip placeholders:** clips without a thumbnail get a placeholder in their game's colour.
-- **Logo:** an archive bracket holding three session marks of rising height, the last one in orange.
+  - The 37 games in the built-in catalog show their **official cover art** (`public/covers`, 400×600, downloaded by `tools/covers.mjs`; the source of each is in `src/data/covers.js`). The art belongs to its publishers and is used here for a non-commercial course project.
+  - Games added by hand, or art that fails to load, get a **drawn cover**: two colours from the title and one of five compositions (eclipse, orbit, arch, split, stack) with the title in large type. `coverPlan()` in `lib/gameColor.js` makes it deterministic and is tested on 5 000 titles.
 
 ## Run
 

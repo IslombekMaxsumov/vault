@@ -11,7 +11,7 @@ import { catalogById, PLATFORMS } from "../data/catalog.js";
 import * as S from "../lib/stats.js";
 import * as db from "../lib/db.js";
 import { GameCover } from "../components/GameCover.jsx";
-import { StarInput, Stat, SessionTrace, EmptyState, Field } from "../components/ui.jsx";
+import { StarInput, SessionTrace, Field, CountDuration } from "../components/ui.jsx";
 import { StartSession, SessionForm, SessionList } from "../components/Sessions.jsx";
 import { ClipCard, ClipPlayer, ClipForm } from "../components/Clips.jsx";
 import { BarChart, ChartBlock, DataTable } from "../components/Charts.jsx";
@@ -50,36 +50,49 @@ export function GamePage({ route }) {
   const platforms = cat ? cat.platforms : PLATFORMS;
 
   return (
-    <div className="container game-page">
-      <a className="back-link" href={href("library")}><ChevronLeft size={16} aria-hidden="true" />{t("nav.library")}</a>
+    <div className="game-page">
+      {/* immersive hero: the art again, blurred and enlarged, as a backdrop */}
       <section className="game-hero">
-        <GameCover game={game} size="lg" />
-        <div className="game-hero-text">
-          <p className="eyebrow">{[game.genre ? t("genre." + game.genre) : t("genre.other"), cat?.studio, cat?.year].filter(Boolean).join(" · ")}</p>
-          <h1 tabIndex={-1}>{game.title}</h1>
-          <SessionTrace sessions={[...sessions].sort((a, b) => a.date.localeCompare(b.date))} max={40} label={t("game.traceLabel", { count: sessions.length })} />
-          <div className="game-controls">
-            <Field id="g-status" label={t("lib.status")}>
-              {(a) => <select {...a} className="select" value={game.status} onChange={(e) => save({ status: e.target.value })}>{STATUSES.map((s) => <option key={s} value={s}>{t("status." + s)}</option>)}</select>}
-            </Field>
-            <Field id="g-platform" label={t("lib.platform")}>
-              {(a) => <select {...a} className="select" value={game.platform} onChange={(e) => save({ platform: e.target.value })}>{platforms.map((p) => <option key={p} value={p}>{t("platform." + p)}</option>)}</select>}
-            </Field>
-            <StarInput value={game.rating} onChange={(n) => save({ rating: n })} />
-            <button type="button" className={`btn btn-secondary fav-btn ${game.fav ? "is-on" : ""}`} aria-pressed={game.fav} onClick={() => save({ fav: !game.fav })}>
-              <Heart size={16} aria-hidden="true" fill={game.fav ? "currentColor" : "none"} />{t("game.fav")}
-            </button>
+        <div className="game-backdrop" aria-hidden="true"><GameCover game={game} size="lg" /></div>
+        <div className="container game-hero-inner">
+          <a className="back-link" href={href("library")}><ChevronLeft size={16} aria-hidden="true" />{t("nav.library")}</a>
+          <div className="game-hero-grid">
+            <GameCover game={game} size="lg" className="game-hero-cover" />
+            <div className="game-hero-text">
+              <p className="game-kicker">{[game.genre ? t("genre." + game.genre) : t("genre.other"), cat?.studio, cat?.year].filter(Boolean).join(" · ")}</p>
+              <h1 tabIndex={-1} className="display">{game.title}</h1>
+              <div className="game-figure">
+                <p className="game-figure-num num"><CountDuration minutes={sum.total} short /></p>
+                <p className="game-figure-sub">{t("game.totalLine", { count: sum.count })}</p>
+              </div>
+              <SessionTrace sessions={[...sessions].sort((a, b) => a.date.localeCompare(b.date))} max={48} label={t("game.traceLabel", { count: sessions.length })} />
+            </div>
           </div>
         </div>
-        <div className="game-start"><StartSession fixedGame={game.id} /></div>
       </section>
 
-      <dl className="stat-row">
-        <Stat label={t("game.total")} value={duration(sum.total, { short: true })} sub={t("game.sessions", { count: sum.count })} />
-        <Stat label={t("game.avg")} value={sum.count ? duration(sum.avgSession) : "—"} sub={sum.longest ? t("game.longest", { time: duration(sum.longest.minutes) }) : ""} />
-        <Stat label={t("game.last")} value={last ? shortDate(last) : "—"} sub={last ? t("game.daysAgo", { count: Math.round((fromKey(today) - fromKey(last)) / 864e5) }) : t("lib.notPlayed")} />
-        <Stat label={t("game.streak")} value={t("home.days", { count: streak.current })} sub={t("home.best", { count: streak.longest })} />
-      </dl>
+      <div className="container">
+        <div className="game-row">
+          <dl className="facts">
+            <div><dt>{t("game.avg")}</dt><dd className="num">{sum.count ? duration(sum.avgSession) : "—"}</dd>{sum.longest && <dd className="facts-sub">{t("game.longest", { time: duration(sum.longest.minutes) })}</dd>}</div>
+            <div><dt>{t("game.last")}</dt><dd className="num">{last ? shortDate(last) : "—"}</dd><dd className="facts-sub">{last ? t("game.daysAgo", { count: Math.round((fromKey(today) - fromKey(last)) / 864e5) }) : t("lib.notPlayed")}</dd></div>
+            <div><dt>{t("game.streak")}</dt><dd className="num">{t("home.days", { count: streak.current })}</dd><dd className="facts-sub">{t("home.best", { count: streak.longest })}</dd></div>
+          </dl>
+          <div className="game-start"><StartSession fixedGame={game.id} /></div>
+        </div>
+
+        <div className="game-controls">
+          <Field id="g-status" label={t("lib.status")}>
+            {(a) => <select {...a} className="select" value={game.status} onChange={(e) => save({ status: e.target.value })}>{STATUSES.map((s) => <option key={s} value={s}>{t("status." + s)}</option>)}</select>}
+          </Field>
+          <Field id="g-platform" label={t("lib.platform")}>
+            {(a) => <select {...a} className="select" value={game.platform} onChange={(e) => save({ platform: e.target.value })}>{platforms.map((p) => <option key={p} value={p}>{t("platform." + p)}</option>)}</select>}
+          </Field>
+          <StarInput value={game.rating} onChange={(n) => save({ rating: n })} />
+          <button type="button" className={`btn btn-secondary fav-btn ${game.fav ? "is-on" : ""}`} aria-pressed={game.fav} onClick={() => save({ fav: !game.fav })}>
+            <Heart size={16} aria-hidden="true" fill={game.fav ? "currentColor" : "none"} />{t("game.fav")}
+          </button>
+        </div>
 
       <ChartBlock title={t("game.perWeek")} summary={t("game.perWeekSummary", { time: duration(weeks.reduce((a, w) => a + w.minutes, 0)) })}
         table={<DataTable head={[t("stats.week"), t("stats.time")]} rows={weeks.map((w) => [w.hint, duration(w.minutes)])} />}>
@@ -106,7 +119,7 @@ export function GamePage({ route }) {
               <button type="button" className="btn btn-secondary btn-sm" onClick={() => setClipOpen(true)}><Plus size={15} aria-hidden="true" />{t("clips.add")}</button>
             </div>
             {clips.length ? (
-              <div className="clip-grid clip-grid-side">
+              <div className="wall wall-side">
                 {clips.map((c) => <ClipCard key={c.id} clip={c} owner={me} gameTitle={game.title} onOpen={() => setPlaying(c)} />)}
               </div>
             ) : <p className="muted">{t("game.noClips")}</p>}
@@ -129,6 +142,7 @@ export function GamePage({ route }) {
       <Modal open={!!editClip} onClose={() => setEditClip(null)} titleId="gEditClip" title={t("clips.editTitle")}>
         {editClip && <ClipForm initial={editClip} games={data.games} onDone={() => setEditClip(null)} />}
       </Modal>
+      </div>
     </div>
   );
 }

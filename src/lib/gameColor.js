@@ -23,3 +23,11 @@ export function assignColors(titles) {
 }
 
 export const gameColor = (title) => `var(--c${colorIndex(title) + 1})`;
+
+// Which colours and which of the `count` compositions a drawn cover uses.
+// Always in range, for any title (>>> keeps the 32-bit hash positive).
+export function coverPlan(title, count) {
+  const h = hashString(title);
+  const a = colorIndex(title);
+  return { a, b: (a + 2 + (h % 5)) % 8, comp: (h >>> 3) % count, seed: (h >>> 7) & 255 };
+}

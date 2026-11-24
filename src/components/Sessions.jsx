@@ -168,28 +168,29 @@ export function SessionList({ sessions, games, editable = true, showGame = true,
   };
   return (
     <>
-      <ol className="day-list">
+      {/* a timeline: one vertical line, a node per session sized by its length */}
+      <ol className="timeline">
         {groups.map(([date, list]) => (
-          <li key={date} className="day">
-            <div className="day-head">
+          <li key={date} className="tl-day">
+            <div className="tl-head">
               <h3>{dayLabel(date, today)}</h3>
-              <span className="day-total num">{duration(list.reduce((a, s) => a + s.minutes, 0))}</span>
+              <span className="tl-total num">{duration(list.reduce((a, s) => a + s.minutes, 0))}</span>
             </div>
-            <ul className="session-rows">
+            <ul className="tl-items">
               {list.map((s) => {
                 const g = byId(s.game);
                 return (
-                  <li key={s.id} className="session-row" style={{ "--game": gameColor(g?.title || "") }}>
-                    <span className="session-mark" style={{ height: `${Math.min(100, 30 + s.minutes / 3)}%` }} aria-hidden="true" />
-                    <span className="session-time num">{s.start || "—"}</span>
-                    <span className="session-main">
-                      {showGame && (g ? <a href={href("game", g.id)} className="session-game">{g.title}</a> : <span className="session-game">{t("log.unknownGame")}</span>)}
-                      {s.note && <span className="session-note">{s.note}</span>}
-                      {!showGame && !s.note && <span className="session-note muted">{t("log.noNote")}</span>}
+                  <li key={s.id} className={`tl-item ${db.isFresh(s.id) ? "is-fresh" : ""}`} style={{ "--game": gameColor(g?.title || ""), "--node": `${Math.round(8 + Math.min(14, s.minutes / 15))}px` }}>
+                    <span className="tl-time num">{s.start || "·"}</span>
+                    <span className="tl-node" aria-hidden="true" />
+                    <span className="tl-body">
+                      {showGame && (g ? <a href={href("game", g.id)} className="tl-game">{g.title}</a> : <span className="tl-game">{t("log.unknownGame")}</span>)}
+                      {s.note && <span className="tl-note">{s.note}</span>}
+                      {!showGame && !s.note && <span className="tl-note">{t("log.noNote")}</span>}
                     </span>
-                    <span className="session-dur num">{duration(s.minutes)}</span>
+                    <span className="tl-dur num">{duration(s.minutes)}</span>
                     {editable && (
-                      <span className="session-actions">
+                      <span className="tl-actions">
                         <button type="button" className="icon-btn icon-btn-sm" aria-label={t("log.editOne", { game: g?.title || "" })} onClick={() => setEditing(s)}><Pencil size={15} aria-hidden="true" /></button>
                         <button type="button" className="icon-btn icon-btn-sm" aria-label={t("log.removeOne", { game: g?.title || "" })} onClick={() => remove(s)}><Trash2 size={15} aria-hidden="true" /></button>
                       </span>

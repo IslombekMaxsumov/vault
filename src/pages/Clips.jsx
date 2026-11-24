@@ -65,7 +65,7 @@ export function ClipsPage({ route }) {
       </div>
 
       {list.length ? (
-        <ul className="clip-grid">
+        <ul className="wall">
           {list.map((x) => (
             <li key={x.owner.username + x.clip.id}><ClipCard clip={x.clip} owner={x.owner} gameTitle={x.gameTitle} onOpen={() => setOpen(x.clip.id)} /></li>
           ))}

@@ -184,6 +184,14 @@ const en = {
   "profile.deleteText": "The account @{name} and all its games, sessions and clips will be removed from this browser. This can't be undone.",
   "profile.deleteYes": "Delete for good",
 
+  "home.factSessions": { one: "session", other: "sessions" }, "home.factStreak": { one: "day in a row", other: "days in a row" }, "home.factRank": { one: "of {count} player", other: "of {count} players" },
+  "home.featuredLabel": "Open {title}", "home.lastPlayed": "Last played", "home.inTotal": "in total", "home.bestStreak": { one: "Longest streak so far: {count} day.", other: "Longest streak so far: {count} days." },
+  "timer.alreadyRunning": "A session is already running. Stop it first.", "timer.started": "Timer started: {game}",
+  "lib.filters": "Filters", "lib.featured": "Favourite", "lib.collection": "Your collection", "lib.startOne": "Start a session: {title}",
+  "game.totalLine": { one: "played in {count} session", other: "played in {count} sessions" },
+  "stats.thisPeriod": "This period", "stats.prevPeriod": "Period before",
+
+  "error.title": "Something went wrong on this page", "error.text": "Your data is safe. Reload the page, or open another page from the menu.", "error.reload": "Reload",
   "nf.title": "Page not found", "nf.game": "Game not found", "nf.text": "The link may be old, or the game was removed.", "nf.home": "Go home", "nf.toLibrary": "Back to library",
 };
 
@@ -366,6 +374,14 @@ const ru = {
   "profile.deleteText": "Аккаунт @{name} со всеми играми, сессиями и клипами будет удалён из этого браузера. Отменить будет нельзя.",
   "profile.deleteYes": "Удалить навсегда",
 
+  "home.factSessions": { one: "сессия", few: "сессии", many: "сессий", other: "сессии" }, "home.factStreak": { one: "день подряд", few: "дня подряд", many: "дней подряд", other: "дня подряд" }, "home.factRank": { one: "из {count} игрока", few: "из {count} игроков", many: "из {count} игроков", other: "из {count} игрока" },
+  "home.featuredLabel": "Открыть {title}", "home.lastPlayed": "Последняя игра", "home.inTotal": "всего", "home.bestStreak": { one: "Самая длинная серия: {count} день.", few: "Самая длинная серия: {count} дня.", many: "Самая длинная серия: {count} дней.", other: "Самая длинная серия: {count} дня." },
+  "timer.alreadyRunning": "Сессия уже идёт. Сначала остановите её.", "timer.started": "Таймер запущен: {game}",
+  "lib.filters": "Фильтры", "lib.featured": "Избранное", "lib.collection": "Ваша коллекция", "lib.startOne": "Начать сессию: {title}",
+  "game.totalLine": { one: "за {count} сессию", few: "за {count} сессии", many: "за {count} сессий", other: "за {count} сессии" },
+  "stats.thisPeriod": "Этот период", "stats.prevPeriod": "Прошлый период",
+
+  "error.title": "На этой странице что-то пошло не так", "error.text": "Ваши данные в порядке. Обновите страницу или откройте другую через меню.", "error.reload": "Обновить",
   "nf.title": "Страница не найдена", "nf.game": "Игра не найдена", "nf.text": "Ссылка могла устареть, или игру убрали.", "nf.home": "На главную", "nf.toLibrary": "В библиотеку",
 };
 
@@ -548,6 +564,14 @@ const uz = {
   "profile.deleteText": "@{name} akkaunti barcha o'yinlari, seanslari va kliplari bilan shu brauzerdan o'chiriladi. Buni qaytarib bo'lmaydi.",
   "profile.deleteYes": "Butunlay o'chirish",
 
+  "home.factSessions": { one: "ta seans", other: "ta seans" }, "home.factStreak": { one: "kun ketma-ket", other: "kun ketma-ket" }, "home.factRank": { one: "{count} o'yinchi ichida", other: "{count} o'yinchi ichida" },
+  "home.featuredLabel": "{title} sahifasini ochish", "home.lastPlayed": "Oxirgi o'ynalgan", "home.inTotal": "jami", "home.bestStreak": { one: "Eng uzun seriya: {count} kun.", other: "Eng uzun seriya: {count} kun." },
+  "timer.alreadyRunning": "Seans allaqachon ketmoqda. Avval uni to'xtating.", "timer.started": "Taymer boshlandi: {game}",
+  "lib.filters": "Filtrlar", "lib.featured": "Sevimli", "lib.collection": "Sizning kolleksiyangiz", "lib.startOne": "Seansni boshlash: {title}",
+  "game.totalLine": { one: "{count} ta seansda", other: "{count} ta seansda" },
+  "stats.thisPeriod": "Bu davr", "stats.prevPeriod": "Oldingi davr",
+
+  "error.title": "Bu sahifada nimadir xato ketdi", "error.text": "Ma'lumotlaringiz joyida. Sahifani yangilang yoki menyudan boshqa sahifani oching.", "error.reload": "Yangilash",
   "nf.title": "Sahifa topilmadi", "nf.game": "O'yin topilmadi", "nf.text": "Havola eskirgan yoki o'yin olib tashlangan bo'lishi mumkin.", "nf.home": "Bosh sahifaga", "nf.toLibrary": "Kutubxonaga qaytish",
 };
 

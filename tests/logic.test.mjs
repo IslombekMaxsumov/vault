@@ -6,6 +6,7 @@ import * as S from "../src/lib/stats.js";
 import { searchCatalog } from "../src/data/catalog.js";
 import { buildDemoData } from "../src/data/demo.js";
 import { checkSignUp } from "../src/lib/accounts.js";
+import { coverPlan } from "../src/lib/gameColor.js";
 
 const ses = (date, minutes, game = "a", start = "") => ({ id: date + minutes + game, game, date, minutes, start });
 
@@ -145,4 +146,16 @@ test("sign-up checks", () => {
   assert.deepEqual(Object.keys(e).sort(), ["name", "password", "username"]);
   assert.equal(checkSignUp({ username: "qwerty", name: "Ali", password: "secret1", confirm: "x" }, { qwerty: {} }).username, "err.taken");
   assert.equal(checkSignUp({ username: "ali", name: "Ali", password: "secret1", confirm: "x" }, {}).confirm, "err.confirm");
+});
+
+test("drawn covers: same title, same plan; indices always in range", () => {
+  assert.deepEqual(coverPlan("Night Harbour", 5), coverPlan("Night Harbour", 5));
+  const chars = "abcdefghijklmnopqrstuvwxyz Ёжик0123456789'";
+  for (let i = 0; i < 5000; i++) {
+    let title = "";
+    for (let k = 0; k < 1 + (i % 30); k++) title += chars[(i * 7 + k * 13) % chars.length];
+    const p = coverPlan(title + i, 5);
+    assert.ok(p.comp >= 0 && p.comp < 5 && p.a >= 0 && p.a < 8 && p.b >= 0 && p.b < 8 && p.a !== p.b, title);
+  }
+  assert.equal(coverPlan("Night Harbour", 5).comp >= 0, true); // the title that crashed before the fix
 });

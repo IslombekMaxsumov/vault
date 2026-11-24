@@ -8,8 +8,9 @@ import { setQuery } from "../lib/router.js";
 import { fromKey } from "../lib/dates.js";
 import * as S from "../lib/stats.js";
 import { assignColors } from "../lib/gameColor.js";
-import { Segmented, Stat, EmptyState } from "../components/ui.jsx";
-import { ChartBlock, DataTable, BarChart, ShareRing, HBars, HeatMap } from "../components/Charts.jsx";
+import { Segmented, EmptyState, CountDuration } from "../components/ui.jsx";
+import { ChartBlock, DataTable, BarChart, OrbitChart, HBars, HeatMap, PeriodCompare } from "../components/Charts.jsx";
+import { addDays } from "../lib/dates.js";
 
 const PERIODS = ["7d", "30d", "90d", "all"];
 
@@ -47,6 +48,8 @@ export function StatsPage({ route }) {
   const todRows = ["morning", "afternoon", "evening", "night"].map((k) => ({ key: k, label: t("tod." + k), minutes: tod[k] }));
   const heat = S.heatWeeks(data.sessions, today, 12);
   const pct = change == null ? null : Math.round(change * 100);
+  // the same-length period just before, for the comparison bars
+  const before = period === "all" ? null : (() => { const len = spanDays; const r = [addDays(range[0], -len), addDays(range[0], -1)]; return S.inRange(data.sessions, r).reduce((a, x) => a + x.minutes, 0); })();
   const bestDay = weekday.reduce((m, d) => (d.minutes > m.minutes ? d : m), weekday[0]);
 
   return (
@@ -63,13 +66,22 @@ export function StatsPage({ route }) {
         <EmptyState icon={ChartColumn} title={t("stats.empty")} text={t("stats.emptyText")} />
       ) : (
         <>
-          <dl className="stat-row stat-row-wide">
-            <Stat label={t("stats.total")} value={duration(sum.total, { short: true })} sub={pct == null ? "" : t(pct >= 0 ? "stats.upVs" : "stats.downVs", { pct: formatNumber(Math.abs(pct)) })} className="stat-lead" />
-            <Stat label={t("home.sessions")} value={formatNumber(sum.count)} sub={t("stats.daysPlayed", { count: sum.days, of: spanDays })} />
-            <Stat label={t("game.avg")} value={duration(sum.avgSession)} sub={t("stats.perDay", { time: duration(sum.avgDay) })} />
-            <Stat label={t("stats.longest")} value={sum.longest ? duration(sum.longest.minutes) : "—"} sub={sum.longest ? `${gameTitle(sum.longest.game)} · ${shortDate(sum.longest.date)}` : ""} />
-            <Stat label={t("home.streak")} value={t("home.days", { count: streak.current })} sub={t("home.best", { count: streak.longest })} />
-          </dl>
+          <section className="stats-head" aria-label={t("stats.total")}>
+            <div className="stats-lead">
+              <p className="stats-lead-label">{t("stats.total")}</p>
+              <p className="stats-lead-num num"><CountDuration minutes={sum.total} short /></p>
+              <p className="stats-lead-sub">{pct == null ? t("stats.daysPlayed", { count: sum.days, of: spanDays }) : t(pct >= 0 ? "stats.upVs" : "stats.downVs", { pct: formatNumber(Math.abs(pct)) })}</p>
+            </div>
+            {before != null && (
+              <PeriodCompare now={sum.total} before={before} labelNow={t("stats.thisPeriod")} labelBefore={t("stats.prevPeriod")} />
+            )}
+            <dl className="facts facts-wide">
+              <div><dt>{t("home.sessions")}</dt><dd className="num">{formatNumber(sum.count)}</dd><dd className="facts-sub">{t("stats.daysPlayed", { count: sum.days, of: spanDays })}</dd></div>
+              <div><dt>{t("game.avg")}</dt><dd className="num">{duration(sum.avgSession)}</dd><dd className="facts-sub">{t("stats.perDay", { time: duration(sum.avgDay) })}</dd></div>
+              <div><dt>{t("stats.longest")}</dt><dd className="num">{sum.longest ? duration(sum.longest.minutes) : "—"}</dd><dd className="facts-sub">{sum.longest ? `${gameTitle(sum.longest.game)} · ${shortDate(sum.longest.date)}` : ""}</dd></div>
+              <div><dt>{t("home.streak")}</dt><dd className="num">{t("home.days", { count: streak.current })}</dd><dd className="facts-sub">{t("home.best", { count: streak.longest })}</dd></div>
+            </dl>
+          </section>
 
           <ChartBlock className="chart-main" title={t(weekly ? "stats.perWeek" : "stats.perDay2")}
             summary={t("stats.seriesSummary", { time: duration(sum.total), count: sum.days })}
@@ -78,9 +90,9 @@ export function StatsPage({ route }) {
           </ChartBlock>
 
           <div className="stats-grid">
-            <ChartBlock title={t("stats.byGame")} summary={share.map((s) => `${s.label} ${Math.round(s.share * 100)}%`).join(", ")}
+            <ChartBlock className="chart-orbit" title={t("stats.byGame")} summary={share.map((s) => `${s.label} ${Math.round(s.share * 100)}%`).join(", ")}
               table={<DataTable head={[t("log.game"), t("stats.time"), t("stats.sessions"), "%"]} rows={games.map((g) => [gameTitle(g.game), duration(g.minutes), formatNumber(g.count), formatNumber(Math.round(g.share * 100))])} />}>
-              <ShareRing items={share} center={<><span className="num share-total">{duration(sum.total, { short: true })}</span><span className="muted">{t("stats.games", { count: games.length })}</span></>} />
+              <OrbitChart items={share} center={<><span className="num orbit-total">{duration(sum.total, { short: true })}</span><span>{t("stats.games", { count: games.length })}</span></>} />
             </ChartBlock>
 
             <ChartBlock title={t("stats.weekday")} summary={t("stats.weekdaySummary", { day: bestDay.long, time: duration(bestDay.minutes) })}
@@ -95,7 +107,7 @@ export function StatsPage({ route }) {
               {tod.unknown > 0 && <p className="chart-note muted">{t("stats.noStart", { time: duration(tod.unknown) })}</p>}
             </ChartBlock>
 
-            <ChartBlock title={t("stats.heat")} summary={t("stats.heatSummary", { count: heat.flat().filter((d) => d.minutes > 0).length })}
+            <ChartBlock className="chart-heat" title={t("stats.heat")} summary={t("stats.heatSummary", { count: heat.flat().filter((d) => d.minutes > 0).length })}
               table={<DataTable head={[t("stats.week"), ...wdNames]} rows={heat.map((col) => [shortDate(col[0].date), ...col.map((d) => (d.minutes == null ? "" : d.minutes ? duration(d.minutes) : "0"))])} />}>
               <HeatMap weeks={heat} weekdayNames={wdNames} />
               <p className="chart-note muted">{t("stats.heatNote", { from: shortDate(heat[0][0].date), to: shortDate(today) })}</p>

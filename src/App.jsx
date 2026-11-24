@@ -18,6 +18,7 @@ import { StatsPage } from "./pages/Stats.jsx";
 import { LeaderboardPage } from "./pages/Leaderboard.jsx";
 import { ProfilePage } from "./pages/Profile.jsx";
 import { NotFound } from "./pages/NotFound.jsx";
+import { ErrorBoundary } from "./components/ErrorBoundary.jsx";
 
 const PAGES = { "": HomePage, library: LibraryPage, game: GamePage, log: LogPage, clips: ClipsPage, stats: StatsPage, leaderboard: LeaderboardPage, profile: ProfilePage };
 const TITLES = { "": "nav.home", library: "nav.library", game: "nav.library", log: "nav.log", clips: "nav.clips", stats: "nav.stats", leaderboard: "nav.leaderboard", profile: "nav.profile", login: "auth.login", signup: "auth.signup" };
@@ -70,7 +71,10 @@ export default function App() {
       <a className="skip-link" href="#main" onClick={(e) => { e.preventDefault(); main.current?.querySelector("h1")?.focus(); }}>{t("skip")}</a>
       <Header page={route.page} theme={theme} />
       <main id="main" ref={main} className="page">
-        <Page route={route} />
+        {/* keyed by route: every page change mounts fresh and its sections reveal in sequence (.page-anim in app.css) */}
+        <div key={route.page + "/" + route.param} className="page-anim">
+          <ErrorBoundary><Page route={route} /></ErrorBoundary>
+        </div>
       </main>
       <Footer />
       <TimerControl variant="strip" />

@@ -211,8 +211,13 @@ export function restoreGame(snap) {
 }
 
 /* ---------- sessions ---------- */
+// Sessions added in the last few seconds: the timeline gives them a short reveal.
+const fresh = new Map();
+export const isFresh = (id) => Date.now() - (fresh.get(id) || 0) < 4000;
+
 export function addSession(s) {
   const session = { id: newId(), game: s.game, date: s.date, start: s.start || "", minutes: Math.round(s.minutes), note: String(s.note || "").trim().slice(0, 140) };
+  fresh.set(session.id, Date.now());
   update((d) => {
     d.sessions.push(session);
     // playing a game you'd put aside moves it back to "playing"

@@ -30,7 +30,7 @@ export function ClipThumb({ clip, gameTitle }) {
   return (
     <div className="thumb thumb-ph" style={{ "--cover": gameColor(title) }}>
       <svg className="thumb-art" viewBox="0 0 160 90" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        {[0, 1, 2, 3, 4, 5, 6].map((i) => <rect key={i} x={18 + i * 9} y={70 - ((h >> i) % 5) * 9 - 14} width="3" height={((h >> i) % 5) * 9 + 14} />)}
+        {[0, 1, 2, 3, 4, 5, 6].map((i) => <rect key={i} x={18 + i * 9} y={70 - ((h >>> i) % 5) * 9 - 14} width="3" height={((h >>> i) % 5) * 9 + 14} />)}
       </svg>
       <span className="thumb-title">{title}</span>
       <Mark size={12} className="thumb-mark" />

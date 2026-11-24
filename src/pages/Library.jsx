@@ -2,7 +2,7 @@
 // "Add a game" dialog (search the built-in catalog or add any title by hand).
 // Filters live in the address (#/library?status=playing&sort=played).
 import { useEffect, useMemo, useState } from "react";
-import { Plus, Search, Library as LibIcon, Heart } from "lucide-react";
+import { Plus, Search, Library as LibIcon, Heart, Play, SlidersHorizontal } from "lucide-react";
 import { useI18n } from "../i18n/useI18n.js";
 import { useDb } from "../hooks/useDb.js";
 import { useToday } from "../hooks/useToday.js";
@@ -93,8 +93,10 @@ export function AddGameDialog({ open, onClose }) {
 }
 
 export function LibraryPage({ route }) {
-  const { t, duration, shortDate, formatNumber } = useI18n();
+  const { t, duration, shortDate } = useI18n();
   const { data } = useDb();
+  const toast = useToast();
+  const [showFilters, setShowFilters] = useState(false);
   useToday();
   const q = route.query;
   const state = { q: q.get("q") || "", status: STATUSES.includes(q.get("status")) ? q.get("status") : "", platform: PLATFORMS.includes(q.get("platform")) ? q.get("platform") : "", genre: GENRES.includes(q.get("genre")) ? q.get("genre") : "", sort: SORTS.includes(q.get("sort")) ? q.get("sort") : "played" };
@@ -119,6 +121,15 @@ export function LibraryPage({ route }) {
   };
   list = [...list].sort((a, b) => (b.fav - a.fav) * (state.sort === "played" ? 1 : 0) || sorters[state.sort](a, b));
   const filtered = state.q || state.status || state.platform || state.genre;
+  const extraFilters = [state.platform, state.genre].filter(Boolean).length;
+  // the featured favourite: the most played of the favourites (only on the unfiltered view)
+  const favs = data.games.filter((g) => g.fav).sort((a, b) => info(b).minutes - info(a).minutes);
+  const featured = !filtered && favs[0];
+  const start = (g) => {
+    if (data.timer) return toast(t("timer.alreadyRunning"));
+    db.startTimer(g.id);
+    toast(t("timer.started", { game: g.title }));
+  };
 
   return (
     <div className="container library">
@@ -131,7 +142,7 @@ export function LibraryPage({ route }) {
       </div>
 
       {data.games.length > 0 && (
-        <div className="filters">
+        <div className="toolbar">
           <div className="search-box">
             <Search size={16} aria-hidden="true" />
             <label className="visually-hidden" htmlFor="libSearch">{t("lib.search")}</label>
@@ -143,7 +154,10 @@ export function LibraryPage({ route }) {
               <button key={s} type="button" className="chip" aria-pressed={state.status === s} onClick={() => update({ status: state.status === s ? "" : s })}>{t("status." + s)} <span className="num">{counts[s]}</span></button>
             ))}
           </div>
-          <div className="filter-selects">
+          <button type="button" className="btn btn-ghost btn-sm filter-toggle" aria-expanded={showFilters} aria-controls="libFilters" onClick={() => setShowFilters(!showFilters)}>
+            <SlidersHorizontal size={16} aria-hidden="true" />{t("lib.filters")}{extraFilters > 0 && <span className="num filter-count">{extraFilters}</span>}
+          </button>
+          <div id="libFilters" className={`filter-selects ${showFilters ? "is-open" : ""}`}>
             <label className="mini-field"><span>{t("lib.platform")}</span>
               <select className="select" value={state.platform} onChange={(e) => update({ platform: e.target.value })}><option value="">{t("lib.any")}</option>{PLATFORMS.map((p) => <option key={p} value={p}>{t("platform." + p)}</option>)}</select>
             </label>
@@ -157,6 +171,19 @@ export function LibraryPage({ route }) {
         </div>
       )}
 
+      {featured && (
+        <section className="feature" aria-labelledby="featTitle">
+          <a className="feature-art" href={href("game", featured.id)} tabIndex={-1} aria-hidden="true"><GameCover game={featured} size="lg" /></a>
+          <div className="feature-text">
+            <p className="feature-label"><Heart size={14} fill="currentColor" aria-hidden="true" />{t("lib.featured")}</p>
+            <h2 id="featTitle" className="feature-title"><a href={href("game", featured.id)}>{featured.title}</a></h2>
+            <p className="feature-time num">{duration(info(featured).minutes, { short: true })}</p>
+            <p className="feature-meta"><StatusBadge status={featured.status} /><Stars value={featured.rating} />{info(featured).last && <span>{t("lib.last", { date: shortDate(info(featured).last) })}</span>}</p>
+            <button type="button" className="btn btn-primary" onClick={() => start(featured)}><Play size={16} fill="currentColor" aria-hidden="true" />{t("timer.start")}</button>
+          </div>
+        </section>
+      )}
+
       {data.games.length === 0 ? (
         <EmptyState icon={LibIcon} title={t("lib.emptyTitle")} text={t("lib.emptyText")}>
           <button type="button" className="btn btn-primary" onClick={() => setAdding(true)}>{t("lib.add")}</button>
@@ -167,25 +194,27 @@ export function LibraryPage({ route }) {
         </EmptyState>
       ) : (
         <>
-          {filtered && <p className="result-count muted" role="status">{t("lib.showing", { count: list.length })}</p>}
-          <ul className="cover-grid">
-            {list.map((g) => {
-              const i = info(g);
+          <p className="result-count" role="status">{filtered ? t("lib.showing", { count: list.length }) : t("lib.collection")}</p>
+          <ul className="shelf">
+            {list.map((g, i) => {
+              const it = info(g);
               return (
-                <li key={g.id} className="game-card">
-                  <a href={href("game", g.id)} className="game-link">
-                    <GameCover game={g} />
-                    <span className="game-name">{g.title}</span>
-                  </a>
-                  <div className="game-meta">
-                    <StatusBadge status={g.status} />
-                    {g.fav && <Heart size={13} aria-label={t("game.fav")} fill="currentColor" className="fav-mark" />}
-                    <Stars value={g.rating} />
+                <li key={g.id} className="game-card" style={{ "--i": i }}>
+                  <div className="card-art">
+                    <a href={href("game", g.id)} tabIndex={-1} aria-hidden="true" className="card-art-link"><GameCover game={g} /></a>
+                    <button type="button" className="card-start" onClick={() => start(g)} aria-label={t("lib.startOne", { title: g.title })}>
+                      <Play size={16} fill="currentColor" aria-hidden="true" />
+                    </button>
                   </div>
+                  <a href={href("game", g.id)} className="game-name">{g.title}</a>
+                  <p className="game-meta">
+                    <StatusBadge status={g.status} />
+                    {g.fav && <Heart size={12} aria-label={t("game.fav")} fill="currentColor" className="fav-mark" />}
+                    <Stars value={g.rating} />
+                  </p>
                   <p className="game-numbers">
-                    <span className="num">{i.minutes ? duration(i.minutes, { short: true }) : t("lib.notPlayed")}</span>
-                    {i.last && <span className="muted">{t("lib.last", { date: shortDate(i.last) })}</span>}
-                    {i.count > 0 && <span className="muted visually-hidden">{formatNumber(i.count)}</span>}
+                    <span className="num">{it.minutes ? duration(it.minutes, { short: true }) : t("lib.notPlayed")}</span>
+                    {it.last && <span>{t("lib.last", { date: shortDate(it.last) })}</span>}
                   </p>
                 </li>
               );

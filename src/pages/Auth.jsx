@@ -7,7 +7,12 @@ import { href, navigate } from "../lib/router.js";
 import * as db from "../lib/db.js";
 import { DEMO_LOGIN } from "../data/demo.js";
 import { Logo } from "../components/Logo.jsx";
-import { Field } from "../components/ui.jsx";
+import { Field, Orbits } from "../components/ui.jsx";
+import { GameCover } from "../components/GameCover.jsx";
+import { catalogById } from "../data/catalog.js";
+
+// three covers fanned out over orbit lines: the archive, at a glance
+const COLLAGE = ["eldenring", "cs2", "minecraft"].map((id) => ({ ...catalogById(id), catalogId: id, platform: catalogById(id).platforms[0] }));
 import { LangSwitch, ThemeButton } from "../components/Shell.jsx";
 
 function AuthFrame({ theme, children }) {
@@ -20,6 +25,10 @@ function AuthFrame({ theme, children }) {
       </div>
       <div className="auth-body">
         <aside className="auth-intro">
+          <div className="auth-collage" aria-hidden="true">
+            <Orbits count={4} />
+            {COLLAGE.map((g, i) => <GameCover key={g.id} game={g} className={`collage-${i}`} />)}
+          </div>
           <p className="eyebrow">{t("auth.eyebrow")}</p>
           <p className="auth-lede">{t("auth.lede")}</p>
           <ul className="auth-points">

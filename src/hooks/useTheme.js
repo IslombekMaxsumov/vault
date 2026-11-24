@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { storage } from "../lib/storage.js";
 
-const THEME_COLORS = { dark: "#171918", light: "#F5F3EF" };
+const THEME_COLORS = { dark: "#151C22", light: "#F3F1EB" };
 const media = window.matchMedia("(prefers-color-scheme: dark)");
 
 function readPreference() {

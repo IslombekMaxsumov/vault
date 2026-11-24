@@ -2,6 +2,7 @@
 // for screen readers and a "Table" switch that shows the same numbers as a table.
 import { useId, useState } from "react";
 import { useI18n } from "../i18n/useI18n.js";
+import { useDrawn } from "../hooks/useMotion.js";
 
 export function ChartBlock({ title, summary, table, children, actions, className = "" }) {
   const { t } = useI18n();
@@ -80,24 +81,31 @@ export function BarChart({ data, height = 180, highlightKey }) {
   );
 }
 
-// Ring of shares with a legend: items [{ key, label, minutes, share, color }]
-export function ShareRing({ items, center }) {
+// Orbit chart: one arc per game on its own orbit, longest = most played.
+// Arc length is relative to the top game (it fills 3/4 of a turn), so small
+// games stay visible. items [{ key, label, minutes, share, color }]
+export function OrbitChart({ items, center }) {
   const { duration, formatNumber } = useI18n();
-  const r = 40, c = 2 * Math.PI * r;
-  let offset = 0;
+  const drawn = useDrawn();
+  const top = Math.max(1, ...items.map((i) => i.minutes));
+  const gap = items.length > 6 ? 9 : 11;
   return (
-    <div className="share">
-      <div className="share-ring">
-        <svg viewBox="0 0 100 100" aria-hidden="true">
-          <circle cx="50" cy="50" r={r} className="ring-track" />
-          {items.map((it) => {
-            const len = it.share * c;
-            const el = <circle key={it.key} cx="50" cy="50" r={r} className="share-seg" stroke={it.color} strokeDasharray={`${Math.max(0, len - 1)} ${c}`} strokeDashoffset={-offset} transform="rotate(-90 50 50)" />;
-            offset += len;
-            return el;
+    <div className="orbit-chart">
+      <div className="orbit-fig">
+        <svg viewBox="0 0 220 220" aria-hidden="true">
+          {items.map((it, i) => {
+            const r = 100 - i * gap;
+            const c = 2 * Math.PI * r;
+            const len = drawn ? (it.minutes / top) * 0.75 * c : 0;
+            return (
+              <g key={it.key}>
+                <circle cx="110" cy="110" r={r} className="orbit-track" />
+                <circle cx="110" cy="110" r={r} className="orbit-arc" stroke={it.color} strokeDasharray={`${len} ${c}`} transform="rotate(-90 110 110)" style={{ "--i": i }} />
+              </g>
+            );
           })}
         </svg>
-        {center && <div className="share-center">{center}</div>}
+        {center && <div className="orbit-center">{center}</div>}
       </div>
       <ol className="legend">
         {items.map((it) => (
@@ -105,7 +113,7 @@ export function ShareRing({ items, center }) {
             <span className="legend-swatch" style={{ background: it.color }} aria-hidden="true" />
             <span className="legend-name">{it.label}</span>
             <span className="legend-val num">{duration(it.minutes, { short: true })}</span>
-            <span className="legend-pct num muted">{formatNumber(Math.round(it.share * 100))}%</span>
+            <span className="legend-pct num">{formatNumber(Math.round(it.share * 100))}%</span>
           </li>
         ))}
       </ol>
@@ -113,20 +121,40 @@ export function ShareRing({ items, center }) {
   );
 }
 
-// Horizontal bars with labels: rows [{ key, label, minutes }]
-export function HBars({ rows, unit = "duration" }) {
+// Lollipop rows: a thin stem and a dot at the value. rows [{ key, label, minutes }]
+export function HBars({ rows }) {
   const { duration } = useI18n();
+  const drawn = useDrawn();
   const top = Math.max(1, ...rows.map((r) => r.minutes));
+  const best = rows.reduce((m, r) => (r.minutes > m.minutes ? r : m), rows[0] || {});
   return (
-    <ul className="hbars">
+    <ul className="lollies">
       {rows.map((r, i) => (
-        <li key={r.key}>
-          <span className="hbar-label">{r.label}</span>
-          <span className="hbar-track"><span className="hbar-fill" style={{ width: `${(r.minutes / top) * 100}%`, "--i": i }} /></span>
-          <span className="hbar-val num">{unit === "duration" ? duration(r.minutes) : r.minutes}</span>
+        <li key={r.key} className={r.key === best.key && r.minutes ? "is-top" : ""}>
+          <span className="lolly-label">{r.label}</span>
+          <span className="lolly-track"><span className="lolly-stem" style={{ width: `${drawn ? (r.minutes / top) * 100 : 0}%`, "--i": i }} /></span>
+          <span className="lolly-val num">{duration(r.minutes)}</span>
         </li>
       ))}
     </ul>
+  );
+}
+
+// This period against the one before: two bars on one scale.
+export function PeriodCompare({ now, before, labelNow, labelBefore }) {
+  const { duration } = useI18n();
+  const drawn = useDrawn();
+  const top = Math.max(1, now, before);
+  return (
+    <div className="compare">
+      {[[labelNow, now, "is-now"], [labelBefore, before, "is-before"]].map(([label, v, cls]) => (
+        <div key={cls} className={`compare-row ${cls}`}>
+          <span className="compare-label">{label}</span>
+          <span className="compare-track"><span className="compare-bar" style={{ width: `${drawn ? (v / top) * 100 : 0}%` }} /></span>
+          <span className="compare-val num">{duration(v, { short: true })}</span>
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -146,7 +174,7 @@ export function HeatMap({ weeks, weekdayNames }) {
           <div className="heat-col" key={w}>
             {col.map((d) => {
               const lv = level(d.minutes);
-              return <span key={d.date} className={`heat-cell lv-${lv}`} title={lv < 0 ? "" : `${dayLabel(d.date, today)}: ${d.minutes ? duration(d.minutes) : t("stats.noPlay")}`} />;
+              return <span key={d.date} className={`heat-cell lv-${lv}`} style={{ "--i": w }} title={lv < 0 ? "" : `${dayLabel(d.date, today)}: ${d.minutes ? duration(d.minutes) : t("stats.noPlay")}`} />;
             })}
           </div>
         ))}
